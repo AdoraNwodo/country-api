@@ -21,10 +21,12 @@
     <None Remove="Services\" />
     <None Remove="models\inner\" />
     <None Remove="Settings\" />
+    <None Remove="Middleware\" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Services\" />
     <Folder Include="Models\inner\" />
     <Folder Include="Settings\" />
+    <Folder Include="Middleware\" />
   </ItemGroup>
 </Project>
