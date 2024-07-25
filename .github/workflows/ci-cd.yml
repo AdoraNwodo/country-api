@@ -1,0 +1,83 @@
+name: CI/CD Pipeline
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  build-and-test:
+    runs-on: ubuntu-latest
+    outputs:
+      build_output: ${{ steps.build.outputs.build_output }}
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v3
+
+    - name: Setup .NET
+      uses: actions/setup-dotnet@v3
+      with:
+        dotnet-version: '7.0.x'
+
+    - name: Restore dependencies
+      run: dotnet restore src/CountryAPI.sln
+
+    - name: Build solution
+      id: build
+      run: dotnet build src/CountryAPI.sln --configuration Release --no-restore
+
+    - name: Run tests
+      run: dotnet test src/CountryAPI.sln --configuration Release --no-build --verbosity normal
+
+    - name: Upload build artifacts
+      uses: actions/upload-artifact@v3
+      with:
+        name: build
+        path: src/CountryAPI/bin/Release/
+
+  deploy:
+    runs-on: ubuntu-latest
+    needs: build-and-test
+    permissions:
+      id-token: write
+      contents: read
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v3
+
+    - name: Setup .NET
+      uses: actions/setup-dotnet@v3
+      with:
+        dotnet-version: '7.0.x'
+
+    - name: Download build artifacts
+      uses: actions/download-artifact@v3
+      with:
+        name: build
+
+    - name: Login via Azure Workload Identity
+      uses: azure/login@v1
+      with:
+        client-id: ${{ secrets.AZURE_CLIENT_ID }}
+        tenant-id: ${{ secrets.AZURE_TENANT_ID }}
+        subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+        allow-no-subscriptions: true
+
+    - name: Deploy infrastructure
+      uses: azure/cli@v1
+      with:
+        azcliversion: latest
+        inlineScript: |
+          az deployment group create --resource-group ${{ secrets.AZURE_RESOURCE_GROUP }} \
+            --template-file infra/main.bicep
+
+    - name: Publish to Azure
+      uses: azure/webapps-deploy@v2
+      with:
+        app-name: ${{ secrets.AZURE_WEBAPP_NAME }}
+        slot-name: 'production'
