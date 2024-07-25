@@ -11,8 +11,6 @@ on:
 jobs:
   build-and-test:
     runs-on: ubuntu-latest
-    outputs:
-      publish_path: ${{ steps.publish.outputs.publish_path }}
 
     steps:
     - name: Checkout code
@@ -37,8 +35,6 @@ jobs:
       id: publish
       run: |
         dotnet publish src/CountryAPI.sln --configuration Release --output ./publish
-      outputs:
-        publish_path: ./publish
 
     - name: Upload build artifacts
       uses: actions/upload-artifact@v3
@@ -54,11 +50,18 @@ jobs:
       contents: read
 
     steps:
+    - name: Checkout code
+      uses: actions/checkout@v3
+
+    - name: Setup .NET
+      uses: actions/setup-dotnet@v3
+      with:
+        dotnet-version: '6.0.x'
+
     - name: Download build artifacts
       uses: actions/download-artifact@v3
       with:
         name: build
-        path: ./publish
 
     - name: Login via Azure Workload Identity
       uses: azure/login@v1
@@ -73,6 +76,7 @@ jobs:
       with:
         azcliversion: latest
         inlineScript: |
+          ls 
           az deployment group create --resource-group ${{ secrets.AZURE_RESOURCE_GROUP }} \
             --template-file infra/main.bicep
 
@@ -81,4 +85,4 @@ jobs:
       with:
         app-name: ${{ secrets.AZURE_WEBAPP_NAME }}
         slot-name: 'production'
-        package: ./publish
+        package: ./net6.0/publish
