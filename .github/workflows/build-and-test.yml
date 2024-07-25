@@ -1,0 +1,31 @@
+name: Build and Test
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  build-and-test:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v3
+
+    - name: Setup .NET
+      uses: actions/setup-dotnet@v3
+      with:
+        dotnet-version: '7.0.x'
+
+    - name: Restore dependencies
+      run: dotnet restore src/CountryAPI.sln
+
+    - name: Build solution
+      run: dotnet build src/CountryAPI.sln --configuration Release --no-restore
+
+    - name: Run tests
+      run: dotnet test src/CountryAPI.sln --configuration Release --no-build --verbosity normal
