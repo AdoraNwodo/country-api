@@ -33,11 +33,16 @@ jobs:
     - name: Run tests
       run: dotnet test src/CountryAPI.sln --configuration Release --no-build --verbosity normal
 
+    - name: Publish artifacts
+      id: publish
+      run: |
+        dotnet publish src/CountryAPI.sln --configuration Release --output ./publish
+  
     - name: Upload build artifacts
       uses: actions/upload-artifact@v3
       with:
         name: build
-        path: src/CountryAPI/bin/Release/
+        path: ./publish
 
   deploy:
     runs-on: ubuntu-latest
@@ -81,4 +86,4 @@ jobs:
       with:
         app-name: ${{ secrets.AZURE_WEBAPP_NAME }}
         slot-name: 'production'
-        package: './net6.0'
+        package: './publish'
