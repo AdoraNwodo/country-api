@@ -32,6 +32,12 @@ The architecture of the CountryAPI project is designed for scalability, maintain
    - **Interactions**:
      - The API Layer queries this service to fetch country data when it is not available in the cache.
 
+###  5. **Middleware Layer**
+  - **Description**: A layer of middleware that processes HTTP requests and responses. It includes custom middleware for tasks such as global error handling and serving standard JSON responses.
+  - **Key Features**: 
+      - **Global Error Handling**: Custom middleware captures 404 errors and other exceptions, providing informative JSON responses to users This middleware provides a friendly message at invalid URLs. This goal of this is to guide users to valid endpoints and documentation.
+  - **Interactions**: It sits between the API Layer and the request/response cycle for validation.
+
 ### 5. **CI/CD Pipeline (GitHub Actions)**
    - **Description**: Automated workflows that handle the build, test, and Azure deployment processes.
    - **Key Features**:
