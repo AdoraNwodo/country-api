@@ -1,8 +1,8 @@
 # Country API - Project Overview
 Welcome to the CountryAPI project, a solution designed to provide detailed information about countries, regions, and languages. This project shows how you can use modern .NET technologies, infrastructure as code, and CI/CD to build and deploy scalable applications.
 
-- App URL - `https://countryapi-adora.azurewebsites.net/`
-- Swagger URL - `https://countryapi-adora.azurewebsites.net/swagger`
+- App URL - https://countryapi-adora.azurewebsites.net/
+- Swagger URL - https://countryapi-adora.azurewebsites.net/swagger
 
 ## Project Structure
 
