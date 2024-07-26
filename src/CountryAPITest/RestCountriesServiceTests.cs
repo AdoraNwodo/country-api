@@ -62,7 +62,7 @@ public class RestCountriesServiceTests
         // Assert
         Assert.NotNull(result);
         Assert.Single(result);
-        Assert.Equal("Country1", result[0].Name.Common);
+        Assert.Equal("Country1", result[0].Name!.Common);
     }
 
     [Fact]
@@ -96,9 +96,9 @@ public class RestCountriesServiceTests
         // Assert
         Assert.NotNull(result);
         Assert.Equal(3, result.Count);
-        Assert.Equal("A Country", result[0].Name.Common); // Ensure sorting by "common" name
-        Assert.Equal("B Country", result[1].Name.Common);
-        Assert.Equal("C Country", result[2].Name.Common);
+        Assert.Equal("A Country", result[0].Name!.Common); // Ensure sorting by "common" name
+        Assert.Equal("B Country", result[1].Name!.Common);
+        Assert.Equal("C Country", result[2].Name!.Common);
     }
 
     [Fact]
@@ -120,7 +120,7 @@ public class RestCountriesServiceTests
             .Setup<Task<HttpResponseMessage>>(
                 "SendAsync",
                 ItExpr.Is<HttpRequestMessage>(req =>
-                    req.Method == HttpMethod.Get && req.RequestUri.ToString().Contains("/alpha/C1")),
+                    req.Method == HttpMethod.Get && req.RequestUri!.ToString().Contains("/alpha/C1")),
                 ItExpr.IsAny<CancellationToken>()
             )
             .ReturnsAsync(new HttpResponseMessage
@@ -134,11 +134,11 @@ public class RestCountriesServiceTests
 
         // Assert
         Assert.NotNull(result);
-        Assert.Equal("Country1", result.Name.Common);
-        Assert.Equal("C1", result.Cca2);
-        Assert.Equal("001", result.Ccn3);
-        Assert.Equal("C01", result.Cca3);
-        Assert.Equal("CIO", result.Cioc);
+        Assert.Equal("Country1", result?.Name?.Common);
+        Assert.Equal("C1", result?.Cca2);
+        Assert.Equal("001", result?.Ccn3);
+        Assert.Equal("C01", result?.Cca3);
+        Assert.Equal("CIO", result?.Cioc);
     }
 
     [Fact]
@@ -167,15 +167,15 @@ public class RestCountriesServiceTests
             });
 
         // Act
-        var result = await _service.GetRegionsAsync(true);
+        var result = await _service.GetRegionsAsync(true, null);
 
         // Assert
         Assert.NotNull(result);
-        Assert.Equal(2, result.Count); // Expecting two regions: "Region1" and "Region2"
-        Assert.Equal("Region1", result[0].Name);
-        Assert.Equal("Region2", result[1].Name);
-        Assert.Equal(2, result[0].Countries.Count); // Two countries in Region1
-        Assert.Equal(1, result[1].Countries.Count); // One country in Region2
+        Assert.Equal(2, result?.Count); // Expecting two regions: "Region1" and "Region2"
+        Assert.Equal("Region1", result?[0].Name);
+        Assert.Equal("Region2", result?[1].Name);
+        Assert.Equal(2, result?[0].Countries?.Count); // Two countries in Region1
+        Assert.Equal(1, result?[1].Countries?.Count); // One country in Region2
     }
 
     [Fact]
@@ -223,8 +223,8 @@ public class RestCountriesServiceTests
         Assert.Equal(2, result.Count); // Expecting two languages: "en" and "fr"
         Assert.Equal("en", result[0].Language);
         Assert.Equal("fr", result[1].Language);
-        Assert.Equal(2, result[0].Countries.Count); // Two countries speak English
-        Assert.Equal(2, result[1].Countries.Count); // Two countries speak French
+        Assert.Equal(2, result[0]?.Countries?.Count); // Two countries speak English
+        Assert.Equal(2, result[1]?.Countries?.Count); // Two countries speak French
     }
 
 }

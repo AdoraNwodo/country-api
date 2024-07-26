@@ -3,11 +3,7 @@ namespace CountryAPI
 {
 	public class CacheSettings
 	{
-		public CacheSettings()
-		{
-		}
-
-		public string CacheKey { get; set; }
+		public string CacheKey { get; set; } = "Countries";
 		public int CacheDurationInHours { get; set; }
 
     }

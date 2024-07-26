@@ -1,7 +1,6 @@
 ﻿using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.Options;
 using Newtonsoft.Json;
-using System;
 
 namespace CountryAPI
 {
@@ -35,7 +34,7 @@ namespace CountryAPI
 
                 if (!string.IsNullOrEmpty(search))
                 {
-                    countries = countries.Where(c => c.Name.Common.Contains(search, StringComparison.OrdinalIgnoreCase)).ToList();
+                    countries = countries.Where(c => c.Name!.Common!.Contains(search, StringComparison.OrdinalIgnoreCase)).ToList();
                 }
 
                 if (sorted)
@@ -107,8 +106,8 @@ namespace CountryAPI
                 if (!string.IsNullOrEmpty(search))
                 {
                     regions = regions?
-                        .Where(r => r.Name.Contains(search, StringComparison.OrdinalIgnoreCase) ||
-                                    r.Countries.Any(c => c is CountrySummary cs && cs.Common.Contains(search, StringComparison.OrdinalIgnoreCase)))
+                        .Where(r => r.Name!.Contains(search, StringComparison.OrdinalIgnoreCase) ||
+                                    r.Countries!.Any(c => c is CountrySummary cs && cs.Common!.Contains(search, StringComparison.OrdinalIgnoreCase)))
                         .ToList();
                 }
 
@@ -129,7 +128,7 @@ namespace CountryAPI
 
                 var languages = countries?
                         .Where(c => c.Languages != null && c.Languages.Any())
-                        .SelectMany(c => c.Languages.Select(lang => new { lang.Key, Country = c }))
+                        .SelectMany(c => c.Languages!.Select(lang => new { lang.Key, Country = c }))
                         .GroupBy(x => x.Key)
                         .Select(group => new LanguageResponse
                         {
@@ -148,8 +147,8 @@ namespace CountryAPI
                 if (!string.IsNullOrEmpty(search))
                 {
                     languages = languages?
-                        .Where(l => l.Language.Contains(search, StringComparison.OrdinalIgnoreCase) ||
-                                    l.Countries.Any(c => c is CountrySummary cs && cs.Common.Contains(search, StringComparison.OrdinalIgnoreCase)))
+                        .Where(l => l.Language!.Contains(search, StringComparison.OrdinalIgnoreCase) ||
+                                    l.Countries!.Any(c => c is CountrySummary cs && cs.Common!.Contains(search, StringComparison.OrdinalIgnoreCase)))
                         .ToList();
                 }
 
@@ -173,7 +172,7 @@ namespace CountryAPI
                 if (response.IsSuccessStatusCode)
                 {
                     var content = await response.Content.ReadAsStringAsync();
-                    countries = JsonConvert.DeserializeObject<IList<Country>>(content);
+                    countries = JsonConvert.DeserializeObject<IList<Country>>(content)!;
                     fetchedFromApi = true;
                 }
                 else

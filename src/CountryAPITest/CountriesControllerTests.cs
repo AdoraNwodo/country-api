@@ -46,8 +46,8 @@ public class CountriesControllerTests
         Assert.Equal(200, objectResult.StatusCode); // Check for OK status code
 
         var returnValue = Assert.IsType<PaginatedResponse<Country>>(objectResult.Value);
-        Assert.Single(returnValue.Data);
-        Assert.Equal("Country1", returnValue.Data.First().Name.Common);
+        Assert.Single(returnValue.Data!);
+        Assert.Equal("Country1", returnValue.Data!.First().Name!.Common);
     }
 
 
@@ -67,7 +67,7 @@ public class CountriesControllerTests
         // Assert
         var okResult = Assert.IsType<OkObjectResult>(result);
         var returnValue = Assert.IsType<Country>(okResult.Value);
-        Assert.Equal("Country1", returnValue.Name.Common);
+        Assert.Equal("Country1", returnValue.Name!.Common);
     }
 
     [Fact]

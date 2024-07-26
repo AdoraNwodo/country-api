@@ -94,7 +94,7 @@ namespace CountryAPI.Controllers
                 var country = await _countriesService.GetCountryByCodeAsync(code);
                 if (country == null)
                 {
-                    return NotFound();
+                    return NotFound(new { Message = "Country code does not exist." });
                 }
 
                 return Ok(country);
@@ -127,7 +127,7 @@ namespace CountryAPI.Controllers
             try
             {
                 var regions = await _countriesService.GetRegionsAsync(hasCountryDetails, search);
-                if (regions == null || regions.Count == 0)
+                if (regions == null || regions?.Count == 0)
                 {
                     return NotFound(new { Message = "No regions found." });
                 }
